@@ -22,12 +22,14 @@ class Dungeon
   end
 
   def find_room_in_direction(direction)
-    find_room_in_dungeon(@player.location).connections[direction] || puts "Not a valid option.\n"
+    find_room_in_dungeon(@player.location).connections[direction]
   end
 
   def go(direction)
     puts "You decide to go #{direction.to_s}...\n\n"
-    @player.location = room_in_direction
+    @player.previous_location = @player.location
+    @player.previous_room = (@rooms.detect {|r| r.reference == @player.previous_location}).name
+    @player.location = find_room_in_direction(direction)
     show_current_description
   end
 
@@ -36,7 +38,7 @@ class Dungeon
   end
 
   class Player
-    attr_accessor :name, :location
+    attr_accessor :name, :location, :previous_location, :previous_room
 
     def initialize(name)
       @name = name
@@ -54,7 +56,7 @@ class Dungeon
     end
 
     def full_description
-      "#{@name}\n\nYou are in #{@description}."
+      "\n#{@name}\n\tYou are in #{@description}.\n\n"
     end
   end
 end
